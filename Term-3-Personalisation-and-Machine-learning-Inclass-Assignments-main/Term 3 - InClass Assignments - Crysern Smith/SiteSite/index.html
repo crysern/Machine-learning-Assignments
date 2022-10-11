@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+  <head>
+      <p>You have come to the right place</p>
+      <button onclick="predict()">Press for Prediction</button>
+      <p id ='buttonevent'></p>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.0.0/dist/tf.min.js"></script>
+    <script>
+
+
+
+            var MODEL_URL = 'model/model.json';
+            var loadedModel;
+            tf.loadGraphModel(MODEL_URL).then((model)=> {
+              //Code to make prediction ///////
+              loadedModel = model
+              console.log("loaded model")
+              })
+
+            var predict= ()=>{
+              var customerHistory = {
+                item_id:tf.tensor([[1,2,3,4,5]],[1,5],"int32"),
+                nb_days:tf.tensor([[4,5,6,7,8]],[1,5],"int32")
+              }
+              loadedModel.executeAsync(customerHistory).then((result)=> {
+                console.log("made prediction")
+                var finalProbs = result.slice([0,4]).reshape([-1])
+                console.log(finalProbs.argMax().dataSync())
+                document.getElementById('buttonevent').innerHTML = finalProbs.argMax().dataSync()
+              })
+
+
+            }
+              /////////////////////////////////
+
+            
+    </script>
+    </body>
+  </head>
+</html>
